@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.forms import forms
 from django.forms.models import ModelForm
+from django.forms.widgets import CheckboxSelectMultiple
 
-from .models import Driver
+from taxi.models import Car
 
 
 class DriverCreationForm(UserCreationForm):
@@ -49,3 +51,14 @@ class DriverLicenseUpdateForm(ModelForm):
             raise ValidationError('Last 5 characters must be digits!')
 
         return license_number
+
+class CarCreateForm(forms.ModelForm):
+    drivers = forms.ModelMultipleChoiceField(
+        queryset=get_user_model().objects.all(),
+        widget=CheckboxSelectMultiple,
+        required=False
+    )
+
+    class Meta:
+        model = Car
+        fields = "__all__"
